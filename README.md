@@ -17,5 +17,9 @@ development mode: `npm run server`
 ## The database:
 The database deploys to Kubernetes out of the box.
 
-deploying: `Check instructions in the db folder`
+You can (if you choose to do so) expose the DB to local network using the included service.  
+The service uses MetalLB LoadBalancer to expose the DB using sandbox mode out of the box,  
+modify to your own needs.
+
+Deploying: [Check instructions in the db folder](db/README.md)
 

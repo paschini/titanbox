@@ -1,31 +1,15 @@
-apiVersion: v1
+apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: mysql
+  namespace: default
+  annotations:
+    custom-hostname: mysql
 spec:
-  ports:
-    - port: 3306
-  selector:
-    app: mysql
-  clusterIP: None
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mysql
-spec:
-  selector:
-    matchLabels:
-      app: mysql
-  strategy:
-    type: Recreate
   template:
-    metadata:
-      labels:
-        app: mysql
     spec:
       containers:
-        - image: mysql:8
+        - image: mysql:5.6
           name: mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
@@ -43,3 +27,5 @@ spec:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-pv-claim
+
+
