@@ -12,7 +12,8 @@ The box can be reused by editing the contents in the app.
 
 ---
 ## To Run the server:
-development mode: `npm run server`
+development mode: `npm run server`  
+Some more info on architecture [here](https://www.youtube.com/watch?v=vyz47fUXcxU) and [here](https://www.youtube.com/watch?v=eTRSl1As83A).
 
 ## The database:
 The database deploys to Kubernetes out of the box.

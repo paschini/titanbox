@@ -1,30 +1,46 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import logging from '../config/logging';
 import QRCode from 'qrcode';
 import { generateRandomUuid } from './utils';
+import { Connect, Query } from '../config/mysql';
 
 const NAMESPACE = 'QR Code Generator';
 
-const generateQRCode = async (req: Request, res: Response, next: NextFunction) => {
+const generateQRCode = async (req: Request, res: Response) => {
   logging.info(NAMESPACE, `QR Code Generator route called`);
 
   const uuid = generateRandomUuid();
+  const qrImage = await QRCode.toDataURL(uuid);
+  let query = `INSERT INTO boxes (uuid, QRImage) VALUES ("${uuid}", "${qrImage}")`;
 
-  /** Generate QR Code */
-  try {
-    return res.status(200).json({
-      message: `QR Code generated`,
-      uuid,
-      label: req.body.data,
-      image: await QRCode.toDataURL(uuid)
+  Connect()
+    .then((connection) => {
+      Query(connection, query)
+        .then((result) => {
+          return res.status(200).json({
+            result
+          });
+        })
+        .catch((error) => {
+          logging.error(NAMESPACE, error.message, error);
+
+          return res.status(500).json({
+            message: error.message,
+            error
+          });
+        })
+        .finally(() => {
+          connection.end();
+        });
+    })
+    .catch((error) => {
+      logging.error(NAMESPACE, error.message, error);
+
+      return res.status(500).json({
+        message: error.message,
+        error
+      });
     });
-  } catch (err) {
-    logging.error(NAMESPACE, `\`Something went wrong... ${err}`);
-    console.log(req.body);
-    return res.status(500).json({
-      message: `Something went wrong... ${err}`
-    });
-  }
 };
 
 export default { generateQRCode };
