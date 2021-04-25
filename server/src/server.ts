@@ -5,6 +5,7 @@ import logging from './config/logging';
 import config from './config/config';
 import healthCheck from './routes/health';
 import generateQRCode from './routes/generateQRCode';
+import firstEmpty from './routes/firstEmpty';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -40,6 +41,7 @@ router.use((req, res, next) => {
 /** Routes */
 router.use('/health', healthCheck);
 router.use('/qrcode', generateQRCode);
+router.use('/qrcode', firstEmpty)
 
 /** Error Handling */
 router.use((req, res, next) => {
