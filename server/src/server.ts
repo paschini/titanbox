@@ -6,6 +6,7 @@ import config from './config/config';
 import healthCheck from './routes/health';
 import generateQRCode from './routes/generateQRCode';
 import firstEmpty from './routes/firstEmpty';
+import boxByUuid from "./routes/boxByUuid";
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -31,7 +32,7 @@ router.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
   if (req.method == 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'GET PATCH DELETE POST PUT');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
     return res.status(200).json({});
   }
 
@@ -41,7 +42,8 @@ router.use((req, res, next) => {
 /** Routes */
 router.use('/health', healthCheck);
 router.use('/qrcode', generateQRCode);
-router.use('/qrcode', firstEmpty)
+router.use('/qrcode', firstEmpty);
+router.use('/qrcode', boxByUuid);
 
 /** Error Handling */
 router.use((req, res, next) => {
@@ -55,3 +57,6 @@ router.use((req, res, next) => {
 /** Create the server */
 const httpServer = http.createServer(router);
 httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server running on ${config.server.hostname}:${config.server.port}`));
+
+// enable https to be able to use it on phone
+// https://hackernoon.com/set-up-ssl-in-nodejs-and-express-using-openssl-f2529eab5bb
